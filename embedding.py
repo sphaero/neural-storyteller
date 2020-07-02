@@ -5,7 +5,7 @@ import theano
 import theano.tensor as tensor
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
-import cPickle as pkl
+import pickle as pkl
 import numpy
 import nltk
 
@@ -23,7 +23,7 @@ def load_model(path_to_model):
 
     # Create inverted dictionary
     word_idict = dict()
-    for kk, vv in worddict.iteritems():
+    for kk, vv in worddict.items():
         word_idict[vv] = kk
     word_idict[0] = '<eos>'
     word_idict[1] = 'UNK'
@@ -68,14 +68,14 @@ def encode_sentences(model, X, verbose=False, batch_size=128):
 
     # quick check if a word is in the dictionary
     d = defaultdict(lambda : 0)
-    for w in model['worddict'].keys():
+    for w in list(model['worddict'].keys()):
         d[w] = 1
 
     # Get features. This encodes by length, in order to avoid wasting computation
-    for k in ds.keys():
+    for k in list(ds.keys()):
         if verbose:
-            print k
-        numbatches = len(ds[k]) / batch_size + 1
+            print(k)
+        numbatches = int(len(ds[k]) / batch_size) + 1
         for minibatch in range(numbatches):
             caps = ds[k][minibatch::numbatches]
             caption = [captions[c] for c in caps]
@@ -112,7 +112,7 @@ def init_tparams(params):
     initialize Theano shared variables according to the initial parameters
     """
     tparams = OrderedDict()
-    for kk, pp in params.iteritems():
+    for kk, pp in params.items():
         tparams[kk] = theano.shared(params[kk], name=kk)
     return tparams
 
@@ -121,7 +121,7 @@ def load_params(path, params):
     load parameters
     """
     pp = numpy.load(path)
-    for kk, vv in params.iteritems():
+    for kk, vv in params.items():
         if kk not in pp:
             warnings.warn('%s is not in the archive'%kk)
             continue

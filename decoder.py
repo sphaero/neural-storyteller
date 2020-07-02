@@ -5,7 +5,7 @@ import theano
 import theano.tensor as tensor
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
-import cPickle as pkl
+import pickle as pkl
 import numpy
 
 from search import gen_sample
@@ -22,7 +22,7 @@ def load_model(path_to_model, path_to_dictionary):
 
     # Create inverted dictionary
     word_idict = dict()
-    for kk, vv in worddict.iteritems():
+    for kk, vv in worddict.items():
         word_idict[vv] = kk
     word_idict[0] = '<eos>'
     word_idict[1] = 'UNK'
@@ -30,7 +30,7 @@ def load_model(path_to_model, path_to_dictionary):
     # Load model options
     with open('%s.pkl'%path_to_model, 'rb') as f:
         options = pkl.load(f)
-    if 'doutput' not in options.keys():
+    if 'doutput' not in list(options.keys()):
         options['doutput'] = True
 
     # Load parameters
@@ -90,7 +90,7 @@ def init_tparams(params):
     initialize Theano shared variables according to the initial parameters
     """
     tparams = OrderedDict()
-    for kk, pp in params.iteritems():
+    for kk, pp in params.items():
         tparams[kk] = theano.shared(params[kk], name=kk)
     return tparams
 
@@ -99,7 +99,7 @@ def load_params(path, params):
     load parameters
     """
     pp = numpy.load(path)
-    for kk, vv in params.iteritems():
+    for kk, vv in params.items():
         if kk not in pp:
             warnings.warn('%s is not in the archive'%kk)
             continue
